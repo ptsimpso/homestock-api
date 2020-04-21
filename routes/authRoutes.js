@@ -1,10 +1,11 @@
 const express = require('express')
 
-const User = require('../models/User')
+const { User } = require('../models/User')
 const requireLogin = require('../middleware/requireLogin')
 
 const router = new express.Router()
 
+// Sign up
 router.post('/auth/signup', async (req, res) => {
   const user = new User(req.body)
   try {
@@ -16,6 +17,7 @@ router.post('/auth/signup', async (req, res) => {
   }
 })
 
+// Log in
 router.post('/auth/login', async (req, res) => {
   try {
     const { email, password } = req.body
@@ -28,6 +30,7 @@ router.post('/auth/login', async (req, res) => {
   }
 })
 
+// Log out
 router.post('/auth/logout', requireLogin, async (req, res) => {
   try {
     req.user.tokens = req.user.tokens.filter((token) => token.token !== req.token)
@@ -39,6 +42,7 @@ router.post('/auth/logout', requireLogin, async (req, res) => {
   }
 })
 
+// Log out all clients
 router.post('/auth/logout/all', requireLogin, async (req, res) => {
   try {
     req.user.tokens = []
@@ -50,10 +54,12 @@ router.post('/auth/logout/all', requireLogin, async (req, res) => {
   }
 })
 
+// Fetch self
 router.get('/auth/me', requireLogin, async (req, res) => {
   res.send(req.user)
 })
 
+// Update self
 router.patch('/auth/me', requireLogin, async (req, res) => {
 
   const updates = Object.keys(req.body)
@@ -72,6 +78,7 @@ router.patch('/auth/me', requireLogin, async (req, res) => {
   }
 })
 
+// Delete self
 router.delete('/auth/me', requireLogin, async (req, res) => {
   try {
     await req.user.remove()

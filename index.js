@@ -2,7 +2,13 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
 
+// Load mongo models
+require('./models/User')
+require('./models/Home')
+require('./models/Item')
+
 const authRoutes = require('./routes/authRoutes')
+const homeRoutes = require('./routes/homeRoutes')
 const { MONGO_URI } = require('./config/keys')
 
 mongoose.connect(MONGO_URI, {
@@ -21,6 +27,8 @@ app.get('/', (req, res) => {
 })
 
 app.use(authRoutes)
+app.use(homeRoutes)
+
 
 const PORT = process.env.PORT || 5000
 app.listen(PORT)
