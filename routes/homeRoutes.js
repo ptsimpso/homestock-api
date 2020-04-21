@@ -38,8 +38,6 @@ router.post('/homes', requireLogin, async (req, res) => {
 
 });
 
-// Read a home that is not deleted
-
 // Read homes attached to user that are not deleted
 router.get('/homes', requireLogin, async (req, res) => {
   const { user } = req
@@ -50,15 +48,58 @@ router.get('/homes', requireLogin, async (req, res) => {
       deleted: false
     }).lean()
 
-    res.send(homes)
+    res.send(homes) // TODO: Send back home with populated users with only user id and names
   } catch (error) {
     res.status(500).send(error)
   }
 });
 
-// Update a home
+// Read a home that is not deleted
+router.get('/homes/fetch/:id', requireLogin, async (req, res) => {
+  try {
+    const home = await Home.findOne({ _id: req.params.id, users: req.user.id }).lean()
+
+    res.send(home) // TODO: Send back home with populated users with only user id and names
+  } catch (error) {
+    res.status(400).send({ error: 'ID not found.' })
+  }
+});
 
 // Join a home. Return the home.
+router.post('/homes/join', requireLogin, async (req, res) => {
+  
+  const { user } = req
+  const { joinCode } = req.body
+
+  if (!joinCode || joinCode === "") {
+    res.status(400).send({ error: 'Please provide a code.' })
+    return
+  }
+
+  try {
+    const home = await Home.findOne({ joinCode, deleted: false })
+
+    if (!home) {
+      return res.status(400).send({ error: 'No home found.' })
+    }
+
+    if (home.users.includes(user.id)) {
+      return res.status(400).send({ error: 'You have already joined this home.' })
+    }
+
+    home.users.push(user)
+    const updatedHome = await home.save()
+    res.send(updatedHome) // TODO: Send back home with populated users with only user id and names
+
+  } catch (error) {
+    res.status(400).send(error)
+  }
+
+});
+
+// Update a home
+
+
 
 // Delete a home
 
