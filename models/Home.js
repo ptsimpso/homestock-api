@@ -2,6 +2,11 @@ const mongoose = require('mongoose')
 const { Schema } = mongoose
 
 const { itemSchema } = require('./Item')
+const StatusError = require('../utils/StatusError')
+
+// ******
+// SCHEMA
+// ******
 
 const homeSchema = new Schema({
   name: {
@@ -57,8 +62,12 @@ homeSchema.statics.fetchUserHomes = async (user) => {
 }
 
 homeSchema.statics.fetchUserHomeById = async (id, user) => {
-  const home = await Home.findOne({ _id: id, users: user._id, deleted: false }).populate('users', '_id name')
-  return home
+  try {
+    const home = await Home.findOne({ _id: id, users: user._id, deleted: false }).populate('users', '_id name')
+    return home
+  } catch (error) {
+    throw new StatusError(404, 'Home not found.')
+  }
 }
 
 homeSchema.statics.fetchHomeByCode = async (joinCode) => {
@@ -67,13 +76,21 @@ homeSchema.statics.fetchHomeByCode = async (joinCode) => {
 }
 
 homeSchema.statics.fetchOwnerHomeById = async (id, user) => {
-  const home = await Home.findOne({ _id: id, owner: user._id, deleted: false })
-  return home
+  try {
+    const home = await Home.findOne({ _id: id, owner: user._id, deleted: false })
+    return home
+  } catch (error) {
+    throw new StatusError(404, 'Home not found.')
+  }
 }
 
-homeSchema.statics.deleteHome = async (id, user) => {
-  const home = await Home.updateOne({ _id: id, owner: user._id }, { deleted: true })
-  return home
+homeSchema.statics.deleteOwnerHome = async (id, user) => {
+  try {
+    const home = await Home.updateOne({ _id: id, owner: user._id }, { deleted: true })
+    return home
+  } catch (error) {
+    throw new StatusError(404, 'Home not found.')
+  }
 }
 
 // *******
@@ -98,6 +115,10 @@ homeSchema.methods.addUser = async function (user) {
   const savedHome = await home.saveAndPopulateUsers()
   return savedHome
 }
+
+// *******
+// EXPORTS
+// *******
 
 const Home = mongoose.model('Home', homeSchema)
 

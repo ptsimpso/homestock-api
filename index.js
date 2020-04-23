@@ -31,6 +31,10 @@ app.get('/', (req, res) => {
 app.use(authRoutes)
 app.use(homeRoutes)
 
+// Error handler. This must be last.
+app.use((err, req, res, next) => {
+  res.status(err.statusCode || 400).send({ error: err.message }) // err is of type StatusError
+})
 
 const PORT = process.env.PORT || 5000
 app.listen(PORT)
