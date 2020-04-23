@@ -1,6 +1,7 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
+const compression = require('compression')
 
 // Load mongo models
 require('./models/User')
@@ -21,6 +22,7 @@ mongoose.connect(MONGO_URI, {
 const app = express()
 
 app.use(bodyParser.json())
+app.use(compression())
 
 app.get('/', (req, res) => {
   res.send('Welcome to the HomeStock API')
