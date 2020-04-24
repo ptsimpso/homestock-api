@@ -10,6 +10,7 @@ require('./models/Item')
 
 const authRoutes = require('./routes/authRoutes')
 const homeRoutes = require('./routes/homeRoutes')
+const itemRoutes = require('./routes/itemRoutes')
 const { MONGO_URI } = require('./config/keys')
 
 mongoose.connect(MONGO_URI, {
@@ -30,6 +31,7 @@ app.get('/', (req, res) => {
 
 app.use(authRoutes)
 app.use(homeRoutes)
+app.use(itemRoutes)
 
 // Error handler. This must be last.
 app.use((err, req, res, next) => {

@@ -13,9 +13,11 @@ class HomeService {
       throw new StatusError(422, 'The join code you provided is taken.')
     }
 
+    const home = Home.createHome(user, name, joinCode)
+
     try {
-      const home = await Home.createHome(user, name, joinCode)
-      return home
+      const savedHome = await home.saveAndPopulateUsers()
+      return savedHome
     } catch (error) {
       console.log(error)
       throw new StatusError(500, 'Something went wrong creating your home. Please try again.')
@@ -33,14 +35,14 @@ class HomeService {
   }
 
   static fetchHomeById = async (id, user) => {
+    let home;
     try {
-      const home = await Home.fetchUserHomeById(id, user)
-      if (!home) throw new StatusError(404, 'No home found.')
-
-      return home
+      home = await Home.fetchUserHomeById(id, user)
     } catch (error) {
       throw new StatusError(500, 'Something went wrong fetching your home. Please try again.')
     }
+    if (!home) throw new StatusError(404, 'No home found.')
+    return home
   }
 
   static joinHome = async (joinCode, user) => {

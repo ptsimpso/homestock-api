@@ -43,17 +43,14 @@ homeSchema.statics.isCodeTaken = async (joinCode) => {
   return matchFound
 }
 
-homeSchema.statics.createHome = async (user, name, joinCode) => {
-  const home = new Home({
+homeSchema.statics.createHome = (user, name, joinCode) => {
+  return new Home({
     name,
     owner: user._id,
     joinCode,
     users: [user._id],
     items: []
   })
-
-  const savedHome = await home.saveAndPopulateUsers()
-  return savedHome
 }
 
 homeSchema.statics.fetchUserHomes = async (user) => {
@@ -91,6 +88,20 @@ homeSchema.statics.deleteOwnerHome = async (id, user) => {
   } catch (error) {
     throw new StatusError(404, 'Home not found.')
   }
+}
+
+homeSchema.statics.addItem = async (homeId, user, item) => {
+  let home;
+  try {
+    home = await Home.fetchUserHomeById(homeId, user)
+  } catch (error) {
+    throw new StatusError(500, 'Something went wrong fetching your home. Please try again.')
+  }
+  if (!home) throw new StatusError(404, 'No home found.')
+
+  home.items.unshift(item)
+  const savedHome = await home.save()
+  return savedHome
 }
 
 // *******

@@ -1,6 +1,5 @@
 const express = require('express')
 
-const { User } = require('../models/User')
 const UserService = require('../services/UserService')
 const requireLogin = require('../middleware/requireLogin')
 
@@ -69,7 +68,7 @@ router.get('/auth/me', requireLogin, async (req, res) => {
 // ***********
 // Update self
 // ***********
-router.patch('/auth/me', requireLogin, async (req, res) => {
+router.patch('/auth/me', requireLogin, async (req, res, next) => {
   const { user, body: updates } = req
 
   try {
@@ -83,7 +82,7 @@ router.patch('/auth/me', requireLogin, async (req, res) => {
 // ***********
 // Delete self
 // ***********
-router.delete('/auth/me', requireLogin, async (req, res) => {
+router.delete('/auth/me', requireLogin, async (req, res, next) => {
   const { user } = req
   try {
     await UserService.deleteUser(user)

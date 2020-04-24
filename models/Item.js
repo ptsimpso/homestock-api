@@ -19,10 +19,28 @@ const itemSchema = new Schema({
   restockThreshold: {
     type: Number,
     default: 0
-  }
+  },
+  img: String
 }, {
   timestamps: true
 })
+
+// *******
+// STATICS
+// *******
+
+itemSchema.statics.createItem = (user, name, quantity, restockThreshold) => {
+  return new Item({
+    name,
+    owner: user._id,
+    quantity: quantity || 0,
+    restockThreshold: restockThreshold || 0,
+  })
+}
+
+// *******
+// METHODS
+// *******
 
 const Item = mongoose.model('Item', itemSchema)
 
