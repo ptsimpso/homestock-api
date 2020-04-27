@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const StatusError = require('../utils/StatusError')
 const { Schema } = mongoose
 
 const itemSchema = new Schema({

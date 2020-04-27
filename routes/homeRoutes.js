@@ -15,9 +15,7 @@ router.post('/homes', requireLogin, async (req, res, next) => {
   try {
     const newHome = await HomeService.createHome(user, name, joinCode)
     res.send(newHome)
-  } catch (error) {
-    next(error)
-  }
+  } catch (error) { next(error) }
 });
 
 // **************
@@ -29,9 +27,7 @@ router.get('/homes', requireLogin, async (req, res, next) => {
   try {
     const homes = await HomeService.fetchHomes(user)
     res.send(homes)
-  } catch (error) {
-    next(error)
-  }
+  } catch (error) { next(error) }
 });
 
 // ***********
@@ -44,9 +40,7 @@ router.get('/homes/:id', requireLogin, async (req, res, next) => {
   try {
     const home = await HomeService.fetchHomeById(id, user)
     res.send(home)
-  } catch (error) {
-    next(error)
-  }
+  } catch (error) { next(error) }
 });
 
 // ***********
@@ -59,9 +53,20 @@ router.post('/homes/join', requireLogin, async (req, res, next) => {
   try {
     const home = await HomeService.joinHome(joinCode, user)
     res.send(home)
-  } catch (error) {
-    next(error)
-  }
+  } catch (error) { next(error) }
+});
+
+// ************
+// Leave a home
+// ************
+router.post('/homes/:id/leave', requireLogin, async (req, res, next) => {
+  const { user } = req
+  const { id } = req.params
+
+  try {
+    await HomeService.leaveHome(id, user)
+    res.send()
+  } catch (error) { next(error) }
 });
 
 // *************
@@ -74,9 +79,7 @@ router.patch('/homes/:id', requireLogin, async (req, res, next) => {
   try {
     const updatedHome = await HomeService.updateHome(id, updates, user)
     res.send(updatedHome)
-  } catch (error) {
-    next(error)
-  }
+  } catch (error) { next(error) }
 })
 
 // *************
@@ -88,9 +91,19 @@ router.delete('/homes/:id', requireLogin, async (req, res, next) => {
   try {
     await HomeService.deleteHome(id, user)
     res.send()
-  } catch (error) {
-    next(error)
-  }
+  } catch (error) { next(error) }
+});
+
+// ****************
+// Fetch home items
+// ****************
+router.get('/homes/:id/items', requireLogin, async (req, res, next) => {
+  const { user } = req
+  const { id } = req.params
+  try {
+    const items = await HomeService.fetchItems(id, user)
+    res.send(items)
+  } catch (error) { next(error) }
 });
 
 

@@ -66,6 +66,15 @@ class HomeService {
     }
   }
 
+  static leaveHome = async (id, user) => {
+    const home = await HomeService.fetchHomeById(id, user)
+    try {
+      await home.removeUser(user)
+    } catch (error) {
+      throw new StatusError(500, 'Something went wrong leaving this home.')
+    }
+  }
+
   static updateHome = async (id, updates, user) => {
     const updateKeys = Object.keys(updates)
     const allowedUpdates = ['name', 'joinCode']
@@ -88,6 +97,11 @@ class HomeService {
 
   static deleteHome = async (id, user) => {
     await Home.deleteOwnerHome(id, user)
+  }
+
+  static fetchItems = async (homeId, user) => {
+    const home = await HomeService.fetchHomeById(homeId, user)
+    return home.items
   }
 
 }

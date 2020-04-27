@@ -13,9 +13,7 @@ router.post('/auth/signup', async (req, res, next) => {
   try {
     const savedUserData = await UserService.signUp(userData)
     res.status(201).send(savedUserData)
-  } catch (error) {
-    next(error)
-  }
+  } catch (error) { next(error) }
 })
 
 // ******
@@ -27,9 +25,7 @@ router.post('/auth/login', async (req, res, next) => {
   try {
     const userData = await UserService.logIn(email, password)
     res.send(userData)
-  } catch (error) {
-    next(error)
-  }
+  } catch (error) { next(error) }
 })
 
 // *******
@@ -40,9 +36,7 @@ router.post('/auth/logout', requireLogin, async (req, res, next) => {
   try {
     await UserService.logOut(currentToken, user)
     res.send()
-  } catch (error) {
-    next(error)
-  }
+  } catch (error) { next(error) }
 })
 
 // *******************
@@ -53,9 +47,7 @@ router.post('/auth/logout/all', requireLogin, async (req, res, next) => {
   try {
     await UserService.logOutAllClients(user)
     res.send()
-  } catch (error) {
-    next(error)
-  }
+  } catch (error) { next(error) }
 })
 
 // **********
@@ -74,9 +66,7 @@ router.patch('/auth/me', requireLogin, async (req, res, next) => {
   try {
     const updatedUser = await UserService.updateUser(updates, user)
     res.send(updatedUser)
-  } catch (error) {
-    next(error)
-  }
+  } catch (error) { next(error) }
 })
 
 // ***********
@@ -87,9 +77,7 @@ router.delete('/auth/me', requireLogin, async (req, res, next) => {
   try {
     await UserService.deleteUser(user)
     res.send()
-  } catch (error) {
-    next(error)
-  }
+  } catch (error) { next(error) }
 })
 
 module.exports = router

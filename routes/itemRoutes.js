@@ -1,6 +1,3 @@
-// TODO: When updating an item, make sure the user is a part of the home that the item belongs to
-// Use item.parent() to get ref to the parent
-
 const express = require('express')
 
 const ItemService = require('../services/ItemService')
@@ -18,26 +15,49 @@ router.post('/items', requireLogin, async (req, res, next) => {
   try {
     const { item } = await ItemService.createItem(homeId, user, name, quantity, restockThreshold)
     res.send(item)
-  } catch (error) {
-    next(error)
-  }
+  } catch (error) { next(error) }
 });
 
-// ***********
-// Fetch items
-// ***********
 
 // **********
 // Fetch item
 // **********
+router.get('/items/:id', requireLogin, async (req, res, next) => {
+  const { user } = req
+  const { id } = req.params
+
+  try {
+    const item = await ItemService.fetchItem(id, user)
+    res.send(item)
+  } catch (error) { next(error) }
+})
 
 // ***********
 // Update item
 // ***********
+router.patch('/items/:id', requireLogin, async (req, res, next) => {
+  const { user } = req
+  const { id } = req.params
+  const { name, quantity, restockThreshold } = req.body
+
+  try {
+    const item = await ItemService.updateItem(id, user, name, quantity, restockThreshold)
+    res.send(item)
+  } catch (error) { next(error) }
+})
 
 // ***********
 // Delete item
 // ***********
+router.delete('/items/:id', requireLogin, async (req, res, next) => {
+  const { user } = req
+  const { id } = req.params
+
+  try {
+    await ItemService.removeItem(id, user)
+    res.send()
+  } catch (error) { next(error) }  
+})
 
 
 module.exports = router

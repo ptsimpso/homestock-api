@@ -104,6 +104,54 @@ homeSchema.statics.addItem = async (homeId, user, item) => {
   return savedHome
 }
 
+homeSchema.statics.fetchItem = async (itemId, user) => {
+  const home = await Home.findOne({
+    users: user._id,
+    deleted: false,
+    'items._id': itemId
+  }, {
+    items: {
+      $elemMatch: { _id: itemId }
+    }
+  })
+  if (!home || home.items.length === 0) throw new StatusError(404, 'Item not found.')
+
+  return home.items[0]
+}
+
+homeSchema.statics.updateItem = async (itemId, user, name, quantity, restockThreshold) => {
+
+  const updateObj = {}
+  if (name) updateObj['items.$[element].name'] = name
+  if (quantity) updateObj['items.$[element].quantity'] = quantity
+  if (restockThreshold) updateObj['items.$[element].restockThreshold'] = restockThreshold
+
+  await Home.updateOne({
+    users: user._id,
+    deleted: false,
+    items: {
+      $elemMatch: { _id: itemId }
+    }
+  }, {
+    $set: updateObj,
+  }, {
+    arrayFilters: [{ 'element._id': itemId }]
+  })
+}
+
+homeSchema.statics.removeItem = async (itemId, user) => {
+  const home = await Home.updateOne({
+    users: user._id,
+    deleted: false,
+    'items._id': itemId
+  }, {
+    $pull: {
+      items: { _id: itemId }
+    }
+  })
+  return home
+}
+
 // *******
 // METHODS
 // *******
@@ -123,6 +171,13 @@ homeSchema.methods.populateUsers = async function () {
 homeSchema.methods.addUser = async function (user) {
   const home = this
   home.users.push(user)
+  const savedHome = await home.saveAndPopulateUsers()
+  return savedHome
+}
+
+homeSchema.methods.removeUser = async function (user) {
+  const home = this
+  home.users = home.users.filter(existingUser => !user._id.equals(existingUser._id))
   const savedHome = await home.saveAndPopulateUsers()
   return savedHome
 }
