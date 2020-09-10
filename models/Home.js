@@ -122,8 +122,8 @@ homeSchema.statics.fetchItem = async (itemId, user) => {
 homeSchema.statics.updateItem = async (itemId, user, { name, quantity, restockThreshold, imgUrl }) => {
   const updateObj = {}
   if (name) updateObj['items.$[element].name'] = name
-  if (quantity) updateObj['items.$[element].quantity'] = quantity
-  if (restockThreshold) updateObj['items.$[element].restockThreshold'] = restockThreshold
+  if (!isNaN(quantity)) updateObj['items.$[element].quantity'] = quantity
+  if (!isNaN(restockThreshold)) updateObj['items.$[element].restockThreshold'] = restockThreshold
   if (imgUrl) updateObj['items.$[element].img'] = imgUrl
 
   await Home.updateOne({
