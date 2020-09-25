@@ -8,7 +8,7 @@ class ImageService {
   static createUploadMiddleware = () => {
     return multer({
       limits: {
-        fileSize: 10000000
+        fileSize: 20000000
       },
       fileFilter(req, file, cb) {
         if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
