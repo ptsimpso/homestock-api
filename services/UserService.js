@@ -1,5 +1,9 @@
+const sgMail = require('@sendgrid/mail');
+
 const StatusError = require('../utils/StatusError')
 const { User } = require('../models/User')
+const { SENDGRID_API_KEY } = require('../config/keys')
+const forgotPassTemplate = require('../utils/email-templates/ForgotPassTemplate')
 
 class UserService {
   static signUp = async (userData) => {
@@ -56,6 +60,21 @@ class UserService {
 
   static deleteUser = async (user) => {
     await user.remove()
+  }
+
+  static resetPassword = async (email) => {
+    const user = await User.findByEmail(email)
+    const tempPassword = Math.random().toString(36).slice(-6).toUpperCase();
+    await UserService.updateUser({ password: tempPassword }, user)
+
+    sgMail.setApiKey(SENDGRID_API_KEY);
+    const msg = {
+      to: email,
+      from: 'homestockapp@gmail.com',
+      subject: 'Password reset request',
+      html: forgotPassTemplate(tempPassword),
+    };
+    await sgMail.send(msg);
   }
 
 }

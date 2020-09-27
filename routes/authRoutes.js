@@ -80,4 +80,19 @@ router.delete('/auth/me', requireLogin, async (req, res, next) => {
   } catch (error) { next(error) }
 })
 
+// **************
+// Reset password
+// **************
+router.post('/auth/reset', async (req, res, next) => {
+  const { email } = req.body
+
+  try {
+    await UserService.resetPassword(email)
+    res.send()
+  } catch (error) {
+    console.log(error)
+    res.send() // Send success even if the request failed for security.
+  }
+})
+
 module.exports = router

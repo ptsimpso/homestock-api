@@ -4,4 +4,5 @@ module.exports = {
   AWS_ID: process.env.AWS_ID,
   AWS_KEY: process.env.AWS_KEY,
   AWS_S3_BUCKET: process.env.AWS_S3_BUCKET,
+  SENDGRID_API_KEY: process.env.SENDGRID_API_KEY,
 }

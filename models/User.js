@@ -65,6 +65,13 @@ userSchema.statics.findByCredentials = async (email, password) => {
   return user
 }
 
+userSchema.statics.findByEmail = async (email) => {
+  const user = await User.findOne({ email })
+  if (!user) throw new StatusError(422, 'Unable to find user.')
+
+  return user
+}
+
 // *******
 // METHODS - use methods do add instance methods User instances
 // *******
