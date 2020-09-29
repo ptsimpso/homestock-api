@@ -26,7 +26,7 @@ app.use(bodyParser.json())
 app.use(compression())
 
 app.get('/', (req, res) => {
-  res.send('Welcome to the HomeStock API')
+  res.send('Welcome. Contact homestockapp@gmail.com for support.')
 })
 
 app.use(authRoutes)
