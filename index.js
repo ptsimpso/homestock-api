@@ -11,7 +11,15 @@ require('./models/Item')
 const authRoutes = require('./routes/authRoutes')
 const homeRoutes = require('./routes/homeRoutes')
 const itemRoutes = require('./routes/itemRoutes')
-const { MONGO_URI } = require('./config/keys')
+const { MONGO_URI, ROLLBAR_KEY } = require('./config/keys')
+
+// App monitoring
+const Rollbar = require("rollbar");
+const rollbar = new Rollbar({
+  accessToken: ROLLBAR_KEY,
+  captureUncaught: true,
+  captureUnhandledRejections: true
+});
 
 mongoose.connect(MONGO_URI, {
   useNewUrlParser: true,
